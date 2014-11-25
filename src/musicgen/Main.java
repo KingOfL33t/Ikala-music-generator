@@ -73,6 +73,9 @@ public class Main {
 	private int currentOctave = 5;
 	private int currentNote = 1;
 
+	/**
+	 * Initializes the random number generator.
+	 */
 	private void init() {
 		// get the current time of the system
 		long time1 = System.nanoTime();
@@ -100,6 +103,10 @@ public class Main {
 		generator = new Generator(timeAsInt);
 	}
 
+	/**
+	 * Increases the current note if possible by a random amount. This will not
+	 * increase the current note above the maximum note for the octave.
+	 */
 	private void increaseNote() {
 		int delta = generator.getIntBetween(1, 3);
 		if (currentNote + delta < notes.length - 1) {
@@ -109,6 +116,10 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Decreases teh current note if possible by a random amount. This will not
+	 * decrease the current note below the minimum note for the octave.
+	 */
 	private void decreaseNote() {
 		int delta = generator.getIntBetween(1, 3);
 		if (currentNote - delta > 0) {
@@ -118,6 +129,14 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Returns a string representing notes that, summed up, have a duration
+	 * equal to the supplied duration.
+	 *
+	 * @param duration the duration to generate beats for
+	 * @param splitChance the chance of splitting into sub-beats
+	 * @return the generated string
+	 */
 	private String getBeat(float duration, float splitChance) {
 		if (generator.getBoolean(splitChance)) {
 			if (duration / 2 >= 1.0f / 32) {
@@ -161,6 +180,11 @@ public class Main {
 		return note;
 	}
 
+	/**
+	 * Changes the octave randomly, but always leans towards the middle, so
+	 * the octave will tend to stay around the center octave depending on
+	 * how strongly it is pulled to the middle.
+	 */
 	private void shiftOctave() {
 		int halfWayOctive = (minOctave + maxOctave) / 2;
 		if (currentOctave < halfWayOctive) {
@@ -188,6 +212,12 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Builds a measure of piano music and returns the string that represents
+	 * the notes.
+	 *
+	 * @return a string of notes to play
+	 */
 	private String buildPianoMeasure() {
 		String measure = "";
 		int i;
@@ -216,6 +246,12 @@ public class Main {
 		return measure;
 	}
 
+	/**
+	 * Builds a song with the given number of measures.
+	 *
+	 * @param measures how many measures to generate
+	 * @return the newly generated song
+	 */
 	private Pattern buildPianoSong(int measures) {
 		String tmp = "";
 		Pattern song = new Pattern();
@@ -227,6 +263,9 @@ public class Main {
 		return song;
 	}
 
+	/**
+	 * Initializes and plays a short song.
+	 */
 	public void start() {
 		init();
 		Player player = new Player();
