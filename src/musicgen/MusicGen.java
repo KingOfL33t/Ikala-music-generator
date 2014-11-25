@@ -8,6 +8,7 @@ import org.jfugue.Player;
 
 /**
  * Used to generate music.
+ *
  * @author Ches Burks
  *
  */
@@ -15,6 +16,7 @@ public class MusicGen {
 
 	/**
 	 * A main method for testing out the generator.
+	 *
 	 * @param args runtime arguments
 	 */
 	public static void main(String[] args) {
@@ -49,23 +51,23 @@ public class MusicGen {
 	/**
 	 * the chance it will be a rest instead of a note
 	 */
-	private float restChance = .07f;
+	private float restChance = .142f;
 	/**
 	 * chance of a sharp or a flat
 	 */
-	private float sharpModChance = .1f;
+	private float sharpModChance = .473f;
 	/**
 	 * if a note is modified, the chance that modification is a sharp
 	 */
-	private float sharpChance = .5f;
+	private float sharpChance = .372f;
 	/**
 	 * how much the octave leans towards the center when deciding shifts
 	 */
-	private float octaveShiftVariance = 0.2f;
+	private float octaveShiftVariance = 0.605f;
 	/**
 	 * the chance a note will not change
 	 */
-	private float noteChangeChanceSame = 0.06f;
+	private float noteChangeChanceSame = 0.558f;
 	/**
 	 * how many beats per measure
 	 */
@@ -77,12 +79,12 @@ public class MusicGen {
 	/**
 	 * The chance that a beat will be split into sub-beats
 	 */
-	private float smallerBeatChance = 0.2f;
+	private float smallerBeatChance = 0.38f;
 	/**
 	 * Each step down creating smaller beats the chance to split again is
 	 * reduced by this amount.
 	 */
-	private int smallBeatReductionFactor = 16;
+	private int smallBeatReductionFactor = 15;
 
 	// for calculating
 	private int currentOctave = 5;
@@ -116,6 +118,28 @@ public class MusicGen {
 		}
 		timeAsInt = (int) deltaTime;
 		generator = new Generator(timeAsInt);
+	}
+
+	/**
+	 * Randomly generates the music generation variables for testing out
+	 * patterns
+	 */
+	private void randomizeVariables() {
+		restChance = Math.abs((float) (generator.nextGaussian()));
+		sharpModChance = Math.abs((float) (generator.nextGaussian()));
+		sharpChance = Math.abs((float) (generator.nextGaussian()));
+		octaveShiftVariance = Math.abs((float) (generator.nextGaussian()));
+		noteChangeChanceSame = Math.abs((float) (generator.nextGaussian()));
+		smallerBeatChance = Math.abs((float) (generator.nextGaussian()));
+		smallBeatReductionFactor = generator.getIntBetween(1, 64);
+		System.out.println("Rest chance: " + restChance);
+		System.out.println("sharp mod chance: " + sharpModChance);
+		System.out.println("sharp chance: " + sharpChance);
+		System.out.println("octave shift variance: " + octaveShiftVariance);
+		System.out.println("note change chance saame: " + noteChangeChanceSame);
+		System.out.println("smaller beat chance: " + smallerBeatChance);
+		System.out.println("small beat reduction factor: "
+				+ smallBeatReductionFactor);
 	}
 
 	/**
@@ -295,6 +319,13 @@ public class MusicGen {
 	public void start() {
 		init();
 		Player player = new Player();
-		player.play(buildPianoSong(10));
+		int i;
+		/*
+		 * for (i = 0; i < 20; ++i){
+		 * player.play(buildPianoSong(generator.getIntBetween(1, 30)));
+		 * randomizeVariables(); }
+		 */
+		player.play(buildPianoSong(20));
+
 	}
 }
