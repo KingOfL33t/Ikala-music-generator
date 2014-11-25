@@ -5,8 +5,16 @@ import musicgen.Generator;
 
 import org.junit.Test;
 
+/**
+ * Used for testing the generation of music
+ * @author Ches Burks
+ *
+ */
 public class GenTester {
 
+	/**
+	 * Tests the distribution curves of the rng
+	 */
 	@Test
 	public void distribution() {
 

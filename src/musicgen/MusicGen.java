@@ -6,13 +6,26 @@ import java.util.HashMap;
 import org.jfugue.Pattern;
 import org.jfugue.Player;
 
-public class Main {
+/**
+ * Used to generate music.
+ * @author Ches Burks
+ *
+ */
+public class MusicGen {
+
+	/**
+	 * A main method for testing out the generator.
+	 * @param args runtime arguments
+	 */
 	public static void main(String[] args) {
-		Main main = new Main();
+		MusicGen main = new MusicGen();
 		main.start();
 	}
 
-	public Main() {
+	/**
+	 * Constructs a new music generator and initializes some variables.
+	 */
+	public MusicGen() {
 		durationValues.put(1.0f, 0);
 		durationValues.put(1.0f / 2, 1);
 		durationValues.put(1.0f / 4, 2);
@@ -136,7 +149,7 @@ public class Main {
 	/**
 	 * Returns a string representing notes that, summed up, have a duration
 	 * equal to the supplied duration.
-	 * 
+	 *
 	 * @param duration the duration to generate beats for
 	 * @param splitChance the chance of splitting into sub-beats
 	 * @return the generated string
@@ -227,7 +240,7 @@ public class Main {
 	/**
 	 * Builds a measure of piano music and returns the string that represents
 	 * the notes.
-	 * 
+	 *
 	 * @return a string of notes to play
 	 */
 	private String buildPianoMeasure() {
@@ -261,7 +274,7 @@ public class Main {
 
 	/**
 	 * Builds a song with the given number of measures.
-	 * 
+	 *
 	 * @param measures how many measures to generate
 	 * @return the newly generated song
 	 */
