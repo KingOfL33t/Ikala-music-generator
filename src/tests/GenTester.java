@@ -1,3 +1,4 @@
+
 package tests;
 
 import musicgen.Generator;
@@ -42,14 +43,14 @@ public class GenTester {
 		int interations = 1000;
 		int tmp;
 		int[] numbers = new int[max + 1];
-		for (i = min; i <= interations; ++i){
-			tmp = generator.getWeightedIntBetween(min, max, (max+min)/2);
+		for (i = min; i <= interations; ++i) {
+			tmp = generator.getWeightedIntBetween(min, max, (max + min) / 2);
 			++numbers[tmp];
 		}
-		for (i = min; i < numbers.length; ++i){
+		for (i = min; i < numbers.length; ++i) {
 			System.out.print(String.format("%04d", i));
 			System.out.print(":");
-			for (j = 0; j < numbers[i]; ++j){
+			for (j = 0; j < numbers[i]; ++j) {
 				System.out.print("*");
 			}
 			System.out.println();

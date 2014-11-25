@@ -1,3 +1,4 @@
+
 package musicgen;
 
 import java.util.Random;
@@ -12,6 +13,7 @@ public class Generator {
 	private int[] mt = new int[624];
 	private int index = 0;
 	Random r;
+
 	/**
 	 * Constructs a new generator and initializes it using the given seed.
 	 *
@@ -87,26 +89,55 @@ public class Generator {
 		return y;
 	}
 
-
-	public double nextGaussian(){
+	/**
+	 * Returns the value given by the java.util.Random's
+	 * {@link java.util.Random#nextGaussian() nextGaussian()} function. This
+	 * double is normally distributed around 0 with a standard deviation of 1.
+	 *
+	 * @return the next Gaussian double
+	 */
+	public double nextGaussian() {
 		return r.nextGaussian();
 	}
-	public int getWeightedIntBetween(int min, int max, int center){
+
+	/**
+	 * Returns an integer between the min and max value. This returns values
+	 * normally distributed with the highest probability of occurring at the
+	 * center point. <br>
+	 * If the center is outside of the range, it is set to the nearest endpoint.
+	 * If max is smaller than min, it will just return min as this is
+	 * impossible.
+	 *
+	 * @param min the minimum value
+	 * @param max the maximum value
+	 * @param center the value most likely to occur
+	 * @return a pseudorandom integer
+	 */
+	public int getWeightedIntBetween(int min, int max, int center) {
 		int deviance = 0;
 		int result = 0;
+		if (max < min) {
+			return min;
+		}
+		if (center < min) {
+			center = min;
+		}
+		if (center > max) {
+			center = max;
+		}
 
-		if (Math.abs(center-min) > Math.abs(max-center)){
-			deviance = center-min;//the larger length
+		if (Math.abs(center - min) > Math.abs(max - center)) {
+			deviance = center - min;// the larger length
 		}
 		else {
-			deviance = max-center;
+			deviance = max - center;
 		}
 
-		result = (int) (center + deviance*r.nextGaussian()/3);
-		if (result < min){
+		result = (int) (center + deviance * r.nextGaussian() / 3);
+		if (result < min) {
 			return getWeightedIntBetween(min, max, center);
 		}
-		if (result > max){
+		if (result > max) {
 			return getWeightedIntBetween(min, max, center);
 		}
 		return result;
@@ -122,7 +153,6 @@ public class Generator {
 	public int getIntBetween(int min, int max) {
 		return min + (int) (getFloat() * ((max - min) + 1));
 	}
-
 
 	/**
 	 * Returns a random {@link Float float} between the given values, inclusive.

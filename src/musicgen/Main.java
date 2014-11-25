@@ -1,3 +1,4 @@
+
 package musicgen;
 
 import java.util.HashMap;
@@ -21,14 +22,15 @@ public class Main {
 	}
 
 	private Generator generator;
-	private final String[] notes = { "C", "D", "E", "F", "G", "A", "B" };
+	private final String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
 	private final String rest = "R";
 	private final String flat = "b";
 	private final String sharp = "#";
 	private final int minOctave = 0;
 	private final int maxOctave = 9;
-	private final String[] durations = { "w", "h", "q", "i", "s", "t" };
-	private final HashMap<Float, Integer> durationValues = new HashMap<Float, Integer>();
+	private final String[] durations = {"w", "h", "q", "i", "s", "t"};
+	private final HashMap<Float, Integer> durationValues =
+			new HashMap<Float, Integer>();
 
 	// settings
 	/**
@@ -111,7 +113,8 @@ public class Main {
 		int delta = generator.getIntBetween(1, 3);
 		if (currentNote + delta < notes.length - 1) {
 			currentNote += delta;
-		} else if (currentNote < notes.length - 1) {
+		}
+		else if (currentNote < notes.length - 1) {
 			currentNote += 1;
 		}
 	}
@@ -124,7 +127,8 @@ public class Main {
 		int delta = generator.getIntBetween(1, 3);
 		if (currentNote - delta > 0) {
 			currentNote -= delta;
-		} else if (currentNote > 0) {
+		}
+		else if (currentNote > 0) {
 			currentNote -= 1;
 		}
 	}
@@ -132,7 +136,7 @@ public class Main {
 	/**
 	 * Returns a string representing notes that, summed up, have a duration
 	 * equal to the supplied duration.
-	 *
+	 * 
 	 * @param duration the duration to generate beats for
 	 * @param splitChance the chance of splitting into sub-beats
 	 * @return the generated string
@@ -141,11 +145,13 @@ public class Main {
 		if (generator.getBoolean(splitChance)) {
 			if (duration / 2 >= 1.0f / 32) {
 				String toReturn = "";
-				toReturn += getBeat(duration / 2, splitChance
-						/ smallBeatReductionFactor);
+				toReturn +=
+						getBeat(duration / 2, splitChance
+								/ smallBeatReductionFactor);
 				toReturn += " ";
-				toReturn += getBeat(duration / 2, splitChance
-						/ smallBeatReductionFactor);
+				toReturn +=
+						getBeat(duration / 2, splitChance
+								/ smallBeatReductionFactor);
 				return toReturn;
 			}
 		}
@@ -153,12 +159,14 @@ public class Main {
 		if (generator.getBoolean(restChance)) {
 			// Rest
 			note += rest;
-		} else {
+		}
+		else {
 			// Note
 			if (!generator.getBoolean(noteChangeChanceSame)) {
 				if (generator.getBoolean()) {
 					increaseNote();
-				} else {
+				}
+				else {
 					decreaseNote();
 				}
 			}
@@ -167,7 +175,8 @@ public class Main {
 			if (generator.getBoolean(sharpModChance)) {
 				if (generator.getBoolean(sharpChance)) {
 					note += sharp;
-				} else {
+				}
+				else {
 					note += flat;
 				}
 			}
@@ -181,9 +190,9 @@ public class Main {
 	}
 
 	/**
-	 * Changes the octave randomly, but always leans towards the middle, so
-	 * the octave will tend to stay around the center octave depending on
-	 * how strongly it is pulled to the middle.
+	 * Changes the octave randomly, but always leans towards the middle, so the
+	 * octave will tend to stay around the center octave depending on how
+	 * strongly it is pulled to the middle.
 	 */
 	private void shiftOctave() {
 		int halfWayOctive = (minOctave + maxOctave) / 2;
@@ -191,14 +200,17 @@ public class Main {
 			// want to shift up more
 			if (generator.getBoolean(0.5f + octaveShiftVariance)) {
 				++currentOctave;
-			} else {
+			}
+			else {
 				--currentOctave;
 			}
-		} else {
+		}
+		else {
 			// want to shift down more
 			if (generator.getBoolean(0.5f + octaveShiftVariance)) {
 				--currentOctave;
-			} else {
+			}
+			else {
 				++currentOctave;
 			}
 		}
@@ -215,7 +227,7 @@ public class Main {
 	/**
 	 * Builds a measure of piano music and returns the string that represents
 	 * the notes.
-	 *
+	 * 
 	 * @return a string of notes to play
 	 */
 	private String buildPianoMeasure() {
@@ -232,8 +244,9 @@ public class Main {
 		while ((numElements & (numElements - 1)) != 0
 				|| !durationValues.containsKey(timeBottom / numElements)) {
 			// not a power of 2
-			numElements = generator.getWeightedIntBetween(1,
-					(int) (baseValue / (1.0f / 32)), 1);
+			numElements =
+					generator.getWeightedIntBetween(1,
+							(int) (baseValue / (1.0f / 32)), 1);
 		}
 		for (i = 0; i < numElements; ++i) {
 			measure += getBeat(timeTop / numElements, smallerBeatChance);
@@ -248,7 +261,7 @@ public class Main {
 
 	/**
 	 * Builds a song with the given number of measures.
-	 *
+	 * 
 	 * @param measures how many measures to generate
 	 * @return the newly generated song
 	 */
