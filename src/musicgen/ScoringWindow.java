@@ -13,6 +13,10 @@ import javax.swing.border.EmptyBorder;
 
 import org.jfugue.Pattern;
 import org.jfugue.Player;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * A window that is used for playing music and ranking the songs that
@@ -78,6 +82,21 @@ public class ScoringWindow extends JDialog {
 			textField.setText(currentGenome.toString());
 		}
 	};
+	Runnable pause = new Runnable() {
+		public void run() {
+			if (player.isPlaying()){
+				player.pause();
+			}
+		}
+	};
+	Runnable resume = new Runnable() {
+		public void run() {
+			if (player.isPaused()){
+				player.resume();
+			}
+		}
+	};
+
 
 	private JTextField textField;
 
@@ -85,6 +104,26 @@ public class ScoringWindow extends JDialog {
 	 * Create the dialog.
 	 */
 	public ScoringWindow() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if (player != null){
+					if (player.isPlaying()){
+						player.stop();
+					}
+				}
+			}
+		});
+		addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				(new Thread(pause)).start();
+			}
+			@Override
+			public void focusGained(FocusEvent e) {
+				(new Thread(resume)).start();
+			}
+		});
 		setTitle("Scoring");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

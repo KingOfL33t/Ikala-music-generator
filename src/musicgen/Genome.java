@@ -20,9 +20,6 @@ public class Genome {
 		genes = new Gene[Gene.VALUE_MAP.length];
 		int i;
 		for (i = 0; i < genes.length; ++i){
-			if (i > Byte.MAX_VALUE || i < 0){
-				//TODO throw an error
-			}
 			genes[i] = new Gene((byte)i);
 		}
 	}
@@ -39,6 +36,19 @@ public class Genome {
 			return genes[id];
 		}
 		return null;
+	}
+
+	/**
+	 * Searches through the entire genome and randomly applies mutations. This
+	 * does not guarantee any values changed.
+	 */
+	public void mutate(){
+		int i;
+		for (i = 0; i < genes.length; ++i){
+			if (RNG.getBoolean(mutationChance)){
+				genes[i].mutate();
+			}
+		}
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 
 package musicgen;
 
-
 /**
  * An interface for classes that make up the genome. Genes have a value
  * associated with them and can mutate or mix with other genes.
@@ -12,37 +11,38 @@ package musicgen;
 public class Gene {
 
 	/**
-	 * Constructs a new Gene with the supplied ID. A random valid value
-	 * is assigned to the gene.
+	 * Constructs a new Gene with the supplied ID. A random valid value is
+	 * assigned to the gene.
+	 *
 	 * @param id the id of the gene
 	 * @see #Gene(byte, byte)
 	 */
-	public Gene(byte id){
+	public Gene(byte id) {
 		this(id, getRandomValidValue(id));
 	}
 
 	/**
 	 * Constructs a new Gene with the supplied ID and value.
+	 *
 	 * @param id the id of the gene
 	 * @param value the value of the gene
 	 */
-	public Gene(byte id, byte value){
-		if (id >= VALUE_MAP.length - 1 || id < 0){
-			//TODO throw an error
+	public Gene(byte id, byte value) {
+		if (id >= VALUE_MAP.length - 1 || id < 0) {
+			// TODO throw an error
 		}
 		this.id = id;
 		if (contains(id, value)) {
 			this.currentValue = value;
 		}
 		else {
-			//TODO throw an error
+			// TODO throw an error
 		}
 
 	}
 
 	/**
 	 * The different voices are:
-	 *
 	 *
 	 * <ol start="0">
 	 * <li>0 (PIANO or ACOUSTIC_GRAND)</li>
@@ -66,13 +66,47 @@ public class Gene {
 	public static final byte[] VAL_VOICES = {0, 9, 16, 34, 38, 40, 44, 47, 48,
 			74, 81, 94, 95, 106, 110};
 	/**
+	 * Defines the normal length of a note. The note lengths are:
+	 *
+	 * <ol start="0">
+	 * <li>Whole notes</li>
+	 * <li>Half notes</li>
+	 * <li>Quarter notes</li>
+	 * <li>Eighth notes</li>
+	 * <li>Sixteenth notes</li>
+	 * <li>Thirty-Second notes</li>
+	 * </ol>
+	 */
+	public static final byte[] VAL_NOTE_LENGTH = {0, 1, 2, 3, 4, 5};
+
+	/**
+	 * Defines the likelihood that any beat may be broken down into parts. Beats
+	 * may be broken down all the way to thirty-second notes, after which no
+	 * splitting occurs. The likelihoods are:
+	 *
+	 * <ol start="0">
+	 * <li>Do not split</li>
+	 * <li>Very rarely split</li>
+	 * <li>Rarely split, and not deeply</li>
+	 * <li>Rarely split</li>
+	 * <li>Split roughly half the time</li>
+	 * <li>Split often, but not deeply</li>
+	 * <li>Split often</li>
+	 * <li>Nearly always split</li>
+	 * <li>Always split</li>
+	 * </ol>
+	 */
+	public static final byte[] VAL_BEAT_SPLIT = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+	/**
 	 * An array of id's and their values. The IDs are:
 	 * <ol start="0">
 	 * <li>{@link #VAL_VOICES Voices}</li>
+	 * <li>{@link #VAL_NOTE_LENGTH Note length}</li>
 	 * </ol>
 	 *
 	 */
-	public static final byte[][] VALUE_MAP = {VAL_VOICES};
+	public static final byte[][] VALUE_MAP = {VAL_VOICES, VAL_NOTE_LENGTH,
+			VAL_BEAT_SPLIT};
 
 	private byte currentValue = 0;
 	/**
@@ -82,15 +116,16 @@ public class Gene {
 	 */
 	private byte id = 0;
 
-	private boolean contains(byte id, byte value){
+	private boolean contains(byte id, byte value) {
 		byte[] bytes = VALUE_MAP[id];
-		for (int i = 0; i < bytes.length; ++i){
-			if (bytes[i] == value){
+		for (int i = 0; i < bytes.length; ++i) {
+			if (bytes[i] == value) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	/**
 	 * Returns the current value of this gene.
 	 *
@@ -101,13 +136,10 @@ public class Gene {
 	}
 
 	/**
-	 * Returns the ID of this gene. The different ID values are: <blockquote>
-	 * <ol start="0">
-	 * <li>{@link #VAL_VOICES Voices}</li>
-	 * </ol>
-	 * </blockquote>
+	 * Returns the ID of this gene.
 	 *
 	 * @return the ID of the gene
+	 * @see #VALUE_MAP the list of mappings
 	 */
 	public byte getID() {
 		return id;

@@ -4,7 +4,6 @@ package musicgen;
 import java.util.HashMap;
 
 import org.jfugue.Pattern;
-import org.jfugue.Player;
 
 /**
  * Used to generate music.
@@ -13,16 +12,6 @@ import org.jfugue.Player;
  *
  */
 public class MusicGen {
-
-	/**
-	 * A main method for testing out the generator.
-	 *
-	 * @param args runtime arguments
-	 */
-	public static void main(String[] args) {
-		MusicGen main = new MusicGen();
-		main.start();
-	}
 
 	/**
 	 * Constructs a new music generator and initializes some variables.
@@ -88,28 +77,6 @@ public class MusicGen {
 	// for calculating
 	private int currentOctave = 5;
 	private int currentNote = 1;
-
-	/**
-	 * Randomly generates the music generation variables for testing out
-	 * patterns
-	 */
-	private void randomizeVariables() {
-		restChance = Math.abs((float) (0.1f * RNG.nextGaussian()));
-		sharpModChance = Math.abs((float) (RNG.nextGaussian()));
-		sharpChance = Math.abs((float) (RNG.nextGaussian()));
-		octaveShiftVariance = Math.abs((float) (RNG.nextGaussian()));
-		noteChangeChanceSame = Math.abs((float) (RNG.nextGaussian()));
-		smallerBeatChance = Math.abs((float) (RNG.nextGaussian()));
-		smallBeatReductionFactor = RNG.getIntBetween(1, 64);
-		System.out.println("Rest chance: " + restChance);
-		System.out.println("sharp mod chance: " + sharpModChance);
-		System.out.println("sharp chance: " + sharpChance);
-		System.out.println("octave shift variance: " + octaveShiftVariance);
-		System.out.println("note change chance saame: " + noteChangeChanceSame);
-		System.out.println("smaller beat chance: " + smallerBeatChance);
-		System.out.println("small beat reduction factor: "
-				+ smallBeatReductionFactor);
-	}
 
 	/**
 	 * Increases the current note if possible by a random amount. This will not
@@ -189,7 +156,6 @@ public class MusicGen {
 			// add the octive number
 			note += currentOctave;
 		}
-
 		// Length
 		note += durations[durationValues.get(duration)];
 		return note;
@@ -255,7 +221,13 @@ public class MusicGen {
 							(int) (baseValue / (1.0f / 32)), 1);
 		}
 		for (i = 0; i < numElements; ++i) {
-			measure += getBeat(timeTop / numElements, smallerBeatChance);
+			if (timeTop / numElements > 1) {
+				measure += getBeat(1.0f, smallerBeatChance);
+			}
+			else {
+				measure += getBeat(timeTop / numElements, smallerBeatChance);
+			}
+
 			measure += " ";
 		}
 
@@ -263,23 +235,6 @@ public class MusicGen {
 			shiftOctave();
 		}
 		return measure;
-	}
-
-	/**
-	 * Builds a song with the given number of measures.
-	 *
-	 * @param measures how many measures to generate
-	 * @return the newly generated song
-	 */
-	private Pattern buildPianoSong(int measures) {
-		String tmp = "";
-		Pattern song = new Pattern();
-		for (int i = 0; i < measures; ++i) {
-			tmp = buildPianoMeasure();
-			System.out.println(tmp);
-			song.add(new Pattern(tmp));
-		}
-		return song;
 	}
 
 	/**
@@ -299,25 +254,22 @@ public class MusicGen {
 	}
 
 	/**
-	 * Initializes and plays a short song.
+	 * Defines the likelihood that any beat may be broken down into parts. Beats
+	 * may be broken down all the way to thirty-second notes, after which no
+	 * splitting occurs. The likelihoods are:
+	 *
+	 * <ol start="0">
+	 * <li>Do not split</li>
+	 * <li>Very rarely split</li>
+	 * <li>Rarely split, and not deeply</li>
+	 * <li>Rarely split</li>
+	 * <li>Split roughly half the time</li>
+	 * <li>Split often, but not deeply</li>
+	 * <li>Split often</li>
+	 * <li>Nearly always split</li>
+	 * <li>Always split</li>
+	 * </ol>
 	 */
-	public void start() {
-		Player player = new Player();
-		int i;
-
-		for (i = 0; i < 2; ++i) {
-			player.play(buildPianoSong(RNG.getIntBetween(1, 30)));
-			randomizeVariables();
-		}
-
-		byte[] v = Gene.VAL_VOICES;
-		for (byte l : v) {
-			System.out.println(""+l);
-			randomizeVariables();
-			player = new Player();
-			player.play(buildSong(5, l));
-		}
-	}
 
 	/**
 	 * Creates a new song using information from a genome.
@@ -325,12 +277,60 @@ public class MusicGen {
 	 * @param genome the genes to use in generation of the song
 	 * @return the newly created song
 	 */
-	public Pattern getSong(Genome genome){
+	public Pattern getSong(Genome genome) {
 		int voice = genome.getGene(0).getValue();
+		int length = genome.getGene(1).getValue();
+		for (float f : durationValues.keySet()) {
+			if (durationValues.get(f) == length) {
+				timeBottom = f;
+				timeTop = timeBottom * 4;
+			}
+		}
+		int split = genome.getGene(2).getValue();
+		switch (split) {
+		case 0:
+			smallerBeatChance = 0.0f;
+			smallBeatReductionFactor = 999999;
+			break;
+		case 1:
+			smallerBeatChance = 0.05f;
+			smallBeatReductionFactor = 6;
+			break;
+		case 2:
+			smallerBeatChance = 0.25f;
+			smallBeatReductionFactor = 64;
+			break;
+		case 3:
+			smallerBeatChance = 0.25f;
+			smallBeatReductionFactor = 64;
+			break;
+		case 4:
+			smallerBeatChance = 0.5f;
+			smallBeatReductionFactor = 2;
+			break;
+		case 5:
+			smallerBeatChance = 0.75f;
+			smallBeatReductionFactor = 64;
+			break;
+
+		case 6:
+			smallerBeatChance = 0.75f;
+			smallBeatReductionFactor = 64;
+			break;
+		case 7:
+			smallerBeatChance = 0.9f;
+			smallBeatReductionFactor = 6;
+			break;
+		case 8:
+			smallerBeatChance = 1.0f;
+			smallBeatReductionFactor = 1;
+			break;
+		}
+
 		Pattern p = buildSong(10, voice);
 		/*
-		 * TODO accept in a genome and use that to generate a pattern.
-		 * return that pattern.
+		 * TODO accept in a genome and use that to generate a pattern. return
+		 * that pattern.
 		 */
 		return p;
 	}
