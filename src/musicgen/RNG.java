@@ -9,7 +9,7 @@ import java.util.Random;
  * @author Ches Burks
  *
  */
-public class Generator {
+public class RNG {
 	private int[] mt = new int[624];
 	private int index = 0;
 	Random r;
@@ -19,7 +19,7 @@ public class Generator {
 	 *
 	 * @param seed the number to seed the generator with.
 	 */
-	public Generator(int seed) {
+	public RNG(int seed) {
 		initializeGenerator(seed);
 		r = new Random(seed);
 	}

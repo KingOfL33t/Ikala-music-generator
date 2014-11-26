@@ -34,9 +34,10 @@ public class MusicGen {
 		durationValues.put(1.0f / 8, 3);
 		durationValues.put(1.0f / 16, 4);
 		durationValues.put(1.0f / 32, 5);
+		init();
 	}
 
-	private Generator generator;
+	private RNG generator;
 	private final String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
 	private final String rest = "R";
 	private final String flat = "b";
@@ -117,7 +118,7 @@ public class MusicGen {
 			deltaTime = deltaTime - Integer.MAX_VALUE;
 		}
 		timeAsInt = (int) deltaTime;
-		generator = new Generator(timeAsInt);
+		generator = new RNG(timeAsInt);
 	}
 
 	/**
@@ -125,7 +126,7 @@ public class MusicGen {
 	 * patterns
 	 */
 	private void randomizeVariables() {
-		restChance = Math.abs((float) (generator.nextGaussian()));
+		restChance = Math.abs((float) (0.1f * generator.nextGaussian()));
 		sharpModChance = Math.abs((float) (generator.nextGaussian()));
 		sharpChance = Math.abs((float) (generator.nextGaussian()));
 		octaveShiftVariance = Math.abs((float) (generator.nextGaussian()));
@@ -314,18 +315,48 @@ public class MusicGen {
 	}
 
 	/**
+	 * Builds a song with the given number of measures.
+	 *
+	 * @param measures how many measures to generate
+	 * @return the newly generated song
+	 */
+	private Pattern buildSong(int measures, int voice) {
+		String tmp = "";
+		Pattern song = new Pattern();
+		for (int i = 0; i < measures; ++i) {
+			tmp = "I" + voice + " " + buildPianoMeasure();
+			song.add(new Pattern(tmp));
+		}
+		return song;
+	}
+
+	/**
 	 * Initializes and plays a short song.
 	 */
 	public void start() {
-		init();
 		Player player = new Player();
 		int i;
-		/*
-		 * for (i = 0; i < 20; ++i){
-		 * player.play(buildPianoSong(generator.getIntBetween(1, 30)));
-		 * randomizeVariables(); }
-		 */
-		player.play(buildPianoSong(20));
 
+		for (i = 0; i < 2; ++i) {
+			player.play(buildPianoSong(generator.getIntBetween(1, 30)));
+			randomizeVariables();
+		}
+
+		byte[] v = Gene.VAL_VOICES;
+		for (byte l : v) {
+			System.out.println(""+l);
+			randomizeVariables();
+			player = new Player();
+			player.play(buildSong(5, l));
+		}
+	}
+
+	public Pattern getSong(){
+		Pattern p = buildSong(10, 0);
+		/*
+		 * TODO accept in a genome and use that to generate a pattern.
+		 * return that pattern.
+		 */
+		return p;
 	}
 }

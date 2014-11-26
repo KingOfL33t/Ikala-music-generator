@@ -1,7 +1,7 @@
 
 package tests;
 
-import musicgen.Generator;
+import musicgen.RNG;
 
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ public class GenTester {
 	@Test
 	public void distribution() {
 
-		Generator generator;
+		RNG generator;
 		// get the current time of the system
 		long time1 = System.nanoTime();
 		/*
@@ -42,7 +42,7 @@ public class GenTester {
 			deltaTime = deltaTime - Integer.MAX_VALUE;
 		}
 		timeAsInt = (int) deltaTime;
-		generator = new Generator(timeAsInt);
+		generator = new RNG(timeAsInt);
 
 		int i;
 		int j;
