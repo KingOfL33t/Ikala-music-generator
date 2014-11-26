@@ -71,7 +71,7 @@ public class ScoringWindow extends JDialog {
 			}
 		}
 	};
-	Runnable newSong = new Runnable() {
+	Runnable newGenome = new Runnable() {
 
 		public void run() {
 			if (player != null){
@@ -83,6 +83,18 @@ public class ScoringWindow extends JDialog {
 			currentPattern = generator.getSong(currentGenome);
 			player = new Player();
 			textField.setText(currentGenome.toString());
+		}
+	};
+	Runnable newSong = new Runnable() {
+
+		public void run() {
+			if (player != null){
+				if (player.isPlaying()){
+					player.stop();
+				}
+			}
+			currentPattern = generator.getSong(currentGenome);
+			player = new Player();
 		}
 	};
 	Runnable pause = new Runnable() {
@@ -167,11 +179,11 @@ public class ScoringWindow extends JDialog {
 			contentPanel.add(btnSubmit, BorderLayout.EAST);
 		}
 		{
-			JButton btnNew = new JButton("New");
+			JButton btnNew = new JButton("New Genome");
 			btnNew.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					(new Thread(newSong)).start();
+					(new Thread(newGenome)).start();
 				}
 			});
 			contentPanel.add(btnNew, BorderLayout.WEST);
@@ -199,6 +211,16 @@ public class ScoringWindow extends JDialog {
 					panel.add(textField, BorderLayout.CENTER);
 					textField.setColumns(10);
 				}
+				{
+					JButton btnGenerateNewSong = new JButton("Generate new song");
+					btnGenerateNewSong.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							(new Thread(newSong)).start();
+						}
+					});
+					panel.add(btnGenerateNewSong, BorderLayout.NORTH);
+				}
 				btnStop.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -208,7 +230,7 @@ public class ScoringWindow extends JDialog {
 			}
 		}
 		generator = new MusicGen();
-		(new Thread(newSong)).start();
+		(new Thread(newGenome)).start();
 	}
 
 }
