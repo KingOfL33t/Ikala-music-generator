@@ -94,14 +94,14 @@ public class ScoringWindow extends JDialog {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			JSlider slider = new JSlider();
-			slider.setValue(5);
+			slider.setValue(3);
 			slider.setToolTipText("Ranking of song");
 			slider.setPaintLabels(true);
 			slider.setSnapToTicks(true);
 			slider.setPaintTicks(true);
 			slider.setMajorTickSpacing(1);
 			slider.setMinimum(1);
-			slider.setMaximum(10);
+			slider.setMaximum(5);
 			contentPanel.add(slider, BorderLayout.SOUTH);
 		}
 		{
