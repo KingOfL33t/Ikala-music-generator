@@ -34,10 +34,8 @@ public class MusicGen {
 		durationValues.put(1.0f / 8, 3);
 		durationValues.put(1.0f / 16, 4);
 		durationValues.put(1.0f / 32, 5);
-		init();
 	}
 
-	private RNG generator;
 	private final String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
 	private final String rest = "R";
 	private final String flat = "b";
@@ -92,47 +90,17 @@ public class MusicGen {
 	private int currentNote = 1;
 
 	/**
-	 * Initializes the random number generator.
-	 */
-	private void init() {
-		// get the current time of the system
-		long time1 = System.nanoTime();
-		/*
-		 * construct a random number of integers based on the last 3 digits of
-		 * the system time this will take a different amount of time based on
-		 * what value the hash was.
-		 */
-		for (int i = 0; i <= time1 % 1000; ++i) {
-			@SuppressWarnings("unused")
-			// not supposed to be used, int x is supposed to be inside the loop
-			int x = i + 2;// its value is trashed
-		}
-		// get the current time again
-		long time2 = System.nanoTime();
-
-		long deltaTime = time2 - time1;
-
-		int timeAsInt;
-		// make sure the long time can fit into an integer
-		while (deltaTime > Integer.MAX_VALUE) {
-			deltaTime = deltaTime - Integer.MAX_VALUE;
-		}
-		timeAsInt = (int) deltaTime;
-		generator = new RNG(timeAsInt);
-	}
-
-	/**
 	 * Randomly generates the music generation variables for testing out
 	 * patterns
 	 */
 	private void randomizeVariables() {
-		restChance = Math.abs((float) (0.1f * generator.nextGaussian()));
-		sharpModChance = Math.abs((float) (generator.nextGaussian()));
-		sharpChance = Math.abs((float) (generator.nextGaussian()));
-		octaveShiftVariance = Math.abs((float) (generator.nextGaussian()));
-		noteChangeChanceSame = Math.abs((float) (generator.nextGaussian()));
-		smallerBeatChance = Math.abs((float) (generator.nextGaussian()));
-		smallBeatReductionFactor = generator.getIntBetween(1, 64);
+		restChance = Math.abs((float) (0.1f * RNG.nextGaussian()));
+		sharpModChance = Math.abs((float) (RNG.nextGaussian()));
+		sharpChance = Math.abs((float) (RNG.nextGaussian()));
+		octaveShiftVariance = Math.abs((float) (RNG.nextGaussian()));
+		noteChangeChanceSame = Math.abs((float) (RNG.nextGaussian()));
+		smallerBeatChance = Math.abs((float) (RNG.nextGaussian()));
+		smallBeatReductionFactor = RNG.getIntBetween(1, 64);
 		System.out.println("Rest chance: " + restChance);
 		System.out.println("sharp mod chance: " + sharpModChance);
 		System.out.println("sharp chance: " + sharpChance);
@@ -148,7 +116,7 @@ public class MusicGen {
 	 * increase the current note above the maximum note for the octave.
 	 */
 	private void increaseNote() {
-		int delta = generator.getIntBetween(1, 3);
+		int delta = RNG.getIntBetween(1, 3);
 		if (currentNote + delta < notes.length - 1) {
 			currentNote += delta;
 		}
@@ -162,7 +130,7 @@ public class MusicGen {
 	 * decrease the current note below the minimum note for the octave.
 	 */
 	private void decreaseNote() {
-		int delta = generator.getIntBetween(1, 3);
+		int delta = RNG.getIntBetween(1, 3);
 		if (currentNote - delta > 0) {
 			currentNote -= delta;
 		}
@@ -180,7 +148,7 @@ public class MusicGen {
 	 * @return the generated string
 	 */
 	private String getBeat(float duration, float splitChance) {
-		if (generator.getBoolean(splitChance)) {
+		if (RNG.getBoolean(splitChance)) {
 			if (duration / 2 >= 1.0f / 32) {
 				String toReturn = "";
 				toReturn +=
@@ -194,14 +162,14 @@ public class MusicGen {
 			}
 		}
 		String note = "";
-		if (generator.getBoolean(restChance)) {
+		if (RNG.getBoolean(restChance)) {
 			// Rest
 			note += rest;
 		}
 		else {
 			// Note
-			if (!generator.getBoolean(noteChangeChanceSame)) {
-				if (generator.getBoolean()) {
+			if (!RNG.getBoolean(noteChangeChanceSame)) {
+				if (RNG.getBoolean()) {
 					increaseNote();
 				}
 				else {
@@ -210,8 +178,8 @@ public class MusicGen {
 			}
 			note += notes[currentNote];
 			// make it sharp or flat
-			if (generator.getBoolean(sharpModChance)) {
-				if (generator.getBoolean(sharpChance)) {
+			if (RNG.getBoolean(sharpModChance)) {
+				if (RNG.getBoolean(sharpChance)) {
 					note += sharp;
 				}
 				else {
@@ -236,7 +204,7 @@ public class MusicGen {
 		int halfWayOctive = (minOctave + maxOctave) / 2;
 		if (currentOctave < halfWayOctive) {
 			// want to shift up more
-			if (generator.getBoolean(0.5f + octaveShiftVariance)) {
+			if (RNG.getBoolean(0.5f + octaveShiftVariance)) {
 				++currentOctave;
 			}
 			else {
@@ -245,7 +213,7 @@ public class MusicGen {
 		}
 		else {
 			// want to shift down more
-			if (generator.getBoolean(0.5f + octaveShiftVariance)) {
+			if (RNG.getBoolean(0.5f + octaveShiftVariance)) {
 				--currentOctave;
 			}
 			else {
@@ -283,7 +251,7 @@ public class MusicGen {
 				|| !durationValues.containsKey(timeBottom / numElements)) {
 			// not a power of 2
 			numElements =
-					generator.getWeightedIntBetween(1,
+					RNG.getWeightedIntBetween(1,
 							(int) (baseValue / (1.0f / 32)), 1);
 		}
 		for (i = 0; i < numElements; ++i) {
@@ -291,7 +259,7 @@ public class MusicGen {
 			measure += " ";
 		}
 
-		if (generator.getBoolean(0.4f)) {
+		if (RNG.getBoolean(0.4f)) {
 			shiftOctave();
 		}
 		return measure;
@@ -338,7 +306,7 @@ public class MusicGen {
 		int i;
 
 		for (i = 0; i < 2; ++i) {
-			player.play(buildPianoSong(generator.getIntBetween(1, 30)));
+			player.play(buildPianoSong(RNG.getIntBetween(1, 30)));
 			randomizeVariables();
 		}
 
@@ -351,8 +319,15 @@ public class MusicGen {
 		}
 	}
 
-	public Pattern getSong(){
-		Pattern p = buildSong(10, 0);
+	/**
+	 * Creates a new song using information from a genome.
+	 *
+	 * @param genome the genes to use in generation of the song
+	 * @return the newly created song
+	 */
+	public Pattern getSong(Genome genome){
+		int voice = genome.getGene(0).getValue();
+		Pattern p = buildSong(10, voice);
 		/*
 		 * TODO accept in a genome and use that to generate a pattern.
 		 * return that pattern.

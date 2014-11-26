@@ -1,7 +1,6 @@
 
 package musicgen;
 
-import java.util.Arrays;
 
 /**
  * An interface for classes that make up the genome. Genes have a value
@@ -11,6 +10,35 @@ import java.util.Arrays;
  *
  */
 public class Gene {
+
+	/**
+	 * Constructs a new Gene with the supplied ID. A random valid value
+	 * is assigned to the gene.
+	 * @param id the id of the gene
+	 * @see #Gene(byte, byte)
+	 */
+	public Gene(byte id){
+		this(id, getRandomValidValue(id));
+	}
+
+	/**
+	 * Constructs a new Gene with the supplied ID and value.
+	 * @param id the id of the gene
+	 * @param value the value of the gene
+	 */
+	public Gene(byte id, byte value){
+		if (id >= VALUE_MAP.length - 1 || id < 0){
+			//TODO throw an error
+		}
+		this.id = id;
+		if (contains(id, value)) {
+			this.currentValue = value;
+		}
+		else {
+			//TODO throw an error
+		}
+
+	}
 
 	/**
 	 * The different voices are:
@@ -35,8 +63,8 @@ public class Gene {
 	 * </ol>
 	 *
 	 */
-	public static final byte[] VAL_VOICES = {0, 9, 16, 34, 38, 40, 44, 47, 48, 74,
-			81, 94, 95, 106, 110};
+	public static final byte[] VAL_VOICES = {0, 9, 16, 34, 38, 40, 44, 47, 48,
+			74, 81, 94, 95, 106, 110};
 	/**
 	 * An array of id's and their values. The IDs are:
 	 * <ol start="0">
@@ -45,6 +73,7 @@ public class Gene {
 	 *
 	 */
 	public static final byte[][] VALUE_MAP = {VAL_VOICES};
+
 	private byte currentValue = 0;
 	/**
 	 * The ID identifies what gene this is. Each ID identifies a specific trait.
@@ -53,6 +82,15 @@ public class Gene {
 	 */
 	private byte id = 0;
 
+	private boolean contains(byte id, byte value){
+		byte[] bytes = VALUE_MAP[id];
+		for (int i = 0; i < bytes.length; ++i){
+			if (bytes[i] == value){
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Returns the current value of this gene.
 	 *
@@ -82,7 +120,7 @@ public class Gene {
 	 * @param val the new value to use
 	 */
 	public void setValue(byte val) {
-		if (Arrays.asList(VALUE_MAP).contains(val)) {
+		if (contains(id, val)) {
 			currentValue = val;
 		}
 	}
@@ -92,7 +130,7 @@ public class Gene {
 	 */
 	public void mutate() {
 		// picks a random value from the array
-		currentValue = VALUE_MAP[id][(int) (Math.random() * VALUE_MAP.length)];
+		currentValue = getRandomValidValue(id);
 	}
 
 	/**
@@ -106,6 +144,17 @@ public class Gene {
 	}
 
 	/**
+	 * Returns a random valid values from the list of values the given gene ID
+	 * can have.
+	 *
+	 * @param id The ID to get a value for
+	 * @return a random value that gene can have
+	 */
+	public static byte getRandomValidValue(int id) {
+		return VALUE_MAP[id][RNG.getIntBetween(0, VALUE_MAP[id].length - 1)];
+	}
+
+	/**
 	 * Returns the result if this gene is crossed with another gene. The end
 	 * result is typically going to be one of the two values. This does not
 	 * modify the value of either gene.
@@ -114,7 +163,10 @@ public class Gene {
 	 * @return the new gene that would be created
 	 */
 	public Gene crossWith(Gene other) {
-		// TODO Auto-generated method stub
+		if (other.getID() != this.getID()) {
+			// TODO they cannot be crossed
+		}
+
 		return null;
 	}
 }

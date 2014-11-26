@@ -1,6 +1,8 @@
 
 package musicgen;
 
+import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -10,24 +12,15 @@ import java.util.Random;
  *
  */
 public class RNG {
-	private int[] mt = new int[624];
-	private int index = 0;
-	Random r;
-
-	/**
-	 * Constructs a new generator and initializes it using the given seed.
-	 *
-	 * @param seed the number to seed the generator with.
-	 */
-	public RNG(int seed) {
-		initializeGenerator(seed);
-		r = new Random(seed);
-	}
+	private static int[] mt = new int[624];
+	private static int index = 0;
+	private static Random r;
+	private static boolean initialized = false;
 
 	/**
 	 * Refill the array with generated numbers.
 	 */
-	private void generateNumbers() {
+	private static void generateNumbers() {
 		int i;
 		for (i = 0; i < 623; i++) {
 			int y = (mt[i] + 0x80000000) + (mt[(i + 1) % 624] + 0x7fffffff);
@@ -43,7 +36,7 @@ public class RNG {
 	 *
 	 * @return The next boolean
 	 */
-	public boolean getBoolean() {
+	public static boolean getBoolean() {
 		return (getInt() >> 30) != 0;
 	}
 
@@ -55,7 +48,7 @@ public class RNG {
 	 * @param probablilty The chance of returning true
 	 * @return The generated boolean
 	 */
-	public boolean getBoolean(float probablilty) {
+	public static boolean getBoolean(float probablilty) {
 		if (getFloat() < probablilty) {
 			return true;
 		}
@@ -67,7 +60,7 @@ public class RNG {
 	 *
 	 * @return The next float
 	 */
-	public float getFloat() {
+	public static float getFloat() {
 		return (getInt() >> 7) / ((float) (1 << 24));
 	}
 
@@ -76,9 +69,12 @@ public class RNG {
 	 *
 	 * @return The next int
 	 */
-	public int getInt() {
+	public static int getInt() {
+		if (!initialized){
+			initialize();
+		}
 		if (index == 0) {
-			this.generateNumbers();
+			generateNumbers();
 		}
 		int y = mt[index];
 		y = y ^ (y >> 11);
@@ -96,7 +92,10 @@ public class RNG {
 	 *
 	 * @return the next Gaussian double
 	 */
-	public double nextGaussian() {
+	public static double nextGaussian() {
+		if (!initialized){
+			initialize();
+		}
 		return r.nextGaussian();
 	}
 
@@ -113,7 +112,10 @@ public class RNG {
 	 * @param center the value most likely to occur
 	 * @return a pseudorandom integer
 	 */
-	public int getWeightedIntBetween(int min, int max, int center) {
+	public static int getWeightedIntBetween(int min, int max, int center) {
+		if (!initialized){
+			initialize();
+		}
 		int deviance = 0;
 		int result = 0;
 		if (max < min) {
@@ -150,7 +152,7 @@ public class RNG {
 	 * @param max The maximum number
 	 * @return The generated int
 	 */
-	public int getIntBetween(int min, int max) {
+	public static int getIntBetween(int min, int max) {
 		return min + (int) (getFloat() * ((max - min) + 1));
 	}
 
@@ -161,21 +163,32 @@ public class RNG {
 	 * @param max The maximum number
 	 * @return The generated float
 	 */
-	public float getFloatBetween(float min, float max) {
+	public static float getFloatBetween(float min, float max) {
 		return min + (getFloat() * ((max - min) + 1));
 	}
 
 	/**
 	 * Initialize the generator with the given seed.
-	 *
-	 * @param seed The seed to use
 	 */
-	public void initializeGenerator(int seed) {
-		this.index = 0;
-		this.mt[0] = seed;
+	public static void initialize() {
+		long seed = getLongSeed();
+		r = new Random(seed);
+		index = 0;
+		mt[0] = (int) seed;
 		int i;
 		for (i = 1; i <= 623; i++) {
-			this.mt[i] = 1812433253 * (mt[i - 1] ^ (mt[i - 1] >> 30)) + i;
+			mt[i] = 1812433253 * (mt[i - 1] ^ (mt[i - 1] >> 30)) + i;
 		}
+	}
+
+	/**
+	 * Generates a long seed using SecureRandom
+	 * @return a random generated long
+	 */
+	private static long getLongSeed() {
+		SecureRandom sec = new SecureRandom();
+		byte[] sbuf = sec.generateSeed(8);
+		ByteBuffer bb = ByteBuffer.wrap(sbuf);
+		return bb.getLong();
 	}
 }

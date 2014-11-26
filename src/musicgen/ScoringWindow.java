@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.jfugue.Pattern;
@@ -32,6 +33,7 @@ public class ScoringWindow extends JDialog {
 
 	private MusicGen generator;
 	private Pattern currentPattern;
+	private Genome currentGenome;
 	private Player player;
 	/**
 	 * Launch the application.
@@ -62,6 +64,22 @@ public class ScoringWindow extends JDialog {
 			}
 		}
 	};
+	Runnable newSong = new Runnable() {
+
+		public void run() {
+			if (player != null){
+				if (player.isPlaying()){
+					player.stop();
+				}
+			}
+			currentGenome = new Genome();
+			currentPattern = generator.getSong(currentGenome);
+			player = new Player();
+			textField.setText(currentGenome.toString());
+		}
+	};
+
+	private JTextField textField;
 
 	/**
 	 * Create the dialog.
@@ -97,28 +115,48 @@ public class ScoringWindow extends JDialog {
 			contentPanel.add(btnSubmit, BorderLayout.EAST);
 		}
 		{
-			JButton btnPlay = new JButton("Play");
-			btnPlay.addMouseListener(new MouseAdapter() {
+			JButton btnNew = new JButton("New");
+			btnNew.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					(new Thread(play)).start();
+					(new Thread(newSong)).start();
 				}
 			});
-			contentPanel.add(btnPlay, BorderLayout.WEST);
+			contentPanel.add(btnNew, BorderLayout.WEST);
 		}
 		{
-			JButton btnStop = new JButton("Stop");
-			btnStop.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					(new Thread(stop)).start();
+			JPanel panel = new JPanel();
+			contentPanel.add(panel, BorderLayout.CENTER);
+			panel.setLayout(new BorderLayout(0, 0));
+			{
+				JButton button = new JButton("Play");
+				button.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						(new Thread(play)).start();
+					}
+				});
+				panel.add(button, BorderLayout.EAST);
+			}
+			{
+				JButton btnStop = new JButton("Stop");
+				panel.add(btnStop, BorderLayout.WEST);
+				{
+					textField = new JTextField();
+					textField.setEditable(false);
+					panel.add(textField, BorderLayout.CENTER);
+					textField.setColumns(10);
 				}
-			});
-			contentPanel.add(btnStop, BorderLayout.NORTH);
+				btnStop.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						(new Thread(stop)).start();
+					}
+				});
+			}
 		}
 		generator = new MusicGen();
-		currentPattern = generator.getSong();
-		player = new Player();
+		(new Thread(newSong)).start();
 	}
 
 }
