@@ -328,10 +328,6 @@ public class MusicGen {
 		}
 
 		Pattern p = buildSong(10, voice);
-		/*
-		 * TODO accept in a genome and use that to generate a pattern. return
-		 * that pattern.
-		 */
 		return p;
 	}
 }
