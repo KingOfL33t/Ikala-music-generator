@@ -59,7 +59,7 @@ public class MusicGen {
 	/**
 	 * how many beats per measure
 	 */
-	private float timeTop = 1;
+	private float timeTop = 4;
 	/**
 	 * how long a beat is
 	 */
@@ -90,6 +90,7 @@ public class MusicGen {
 		else if (currentNote < notes.length - 1) {
 			currentNote += 1;
 		}
+
 	}
 
 	/**
@@ -104,6 +105,7 @@ public class MusicGen {
 		else if (currentNote > 0) {
 			currentNote -= 1;
 		}
+
 	}
 
 	/**
@@ -142,17 +144,24 @@ public class MusicGen {
 				else {
 					decreaseNote();
 				}
+			}// TODO clean up the note generation code
+				// TODO perhaps add different keys
+			if (currentNote == 1) {
+				currentNote = 0;
+			}
+			else if (currentNote == 3) {
+				currentNote = 2;
+			}
+			else if (currentNote >= 6) {
+				currentNote = 5;
 			}
 			note += notes[currentNote];
 			// make it sharp or flat
-			if (RNG.getBoolean(sharpModChance)) {
-				if (RNG.getBoolean(sharpChance)) {
-					note += sharp;
-				}
-				else {
-					note += flat;
-				}
-			}
+			/*
+			 * if (RNG.getBoolean(sharpModChance)) { if
+			 * (RNG.getBoolean(sharpChance)) { note += sharp; } else { note +=
+			 * flat; } }
+			 */
 			// add the octive number
 			note += currentOctave;
 		}
@@ -237,6 +246,7 @@ public class MusicGen {
 		return measure;
 	}
 
+	// TODO add a drum beat gene
 	/**
 	 * Builds a song with the given number of measures.
 	 *
@@ -246,30 +256,24 @@ public class MusicGen {
 	private Pattern buildSong(int measures, int voice) {
 		String tmp = "";
 		Pattern song = new Pattern();
+		song.add(new Pattern("V0 I" + voice));
 		for (int i = 0; i < measures; ++i) {
-			tmp = "I" + voice + " " + buildPianoMeasure();
+			tmp =
+					"V0 "
+							+ buildPianoMeasure()
+							+ "V9 L0 [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]s [TAMBOURINE]s [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i ";
+			tmp +=
+					"V9 L1 [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i ";
+			tmp += "V9 L2 Rq Rq [ELECTRIC_SNARE]q Rq ";
+			tmp += "V9 L3 [BASS_DRUM]q Ri [BASS_DRUM]i Rq [BASS_DRUM]q ";
+			System.out.print(tmp);
 			song.add(new Pattern(tmp));
 		}
+		System.out.println();
 		return song;
 	}
 
-	/**
-	 * Defines the likelihood that any beat may be broken down into parts. Beats
-	 * may be broken down all the way to thirty-second notes, after which no
-	 * splitting occurs. The likelihoods are:
-	 *
-	 * <ol start="0">
-	 * <li>Do not split</li>
-	 * <li>Very rarely split</li>
-	 * <li>Rarely split, and not deeply</li>
-	 * <li>Rarely split</li>
-	 * <li>Split roughly half the time</li>
-	 * <li>Split often, but not deeply</li>
-	 * <li>Split often</li>
-	 * <li>Nearly always split</li>
-	 * <li>Always split</li>
-	 * </ol>
-	 */
+	// play notes 1 3 5 6 of a major scale
 
 	/**
 	 * Creates a new song using information from a genome.

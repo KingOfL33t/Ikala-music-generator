@@ -1,3 +1,4 @@
+
 package musicgen;
 
 import java.awt.BorderLayout;
@@ -22,9 +23,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
- * A window that is used for playing music and ranking the songs that
- * are generated in order to improve the algorithm that generates the
- * music.
+ * A window that is used for playing music and ranking the songs that are
+ * generated in order to improve the algorithm that generates the music.
  *
  * @author Ches Burks
  *
@@ -42,8 +42,10 @@ public class ScoringWindow extends JDialog {
 	private Pattern currentPattern;
 	private Genome currentGenome;
 	private Player player;
+
 	/**
 	 * Launch the application.
+	 * 
 	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
@@ -59,14 +61,14 @@ public class ScoringWindow extends JDialog {
 
 	Runnable play = new Runnable() {
 		public void run() {
-			if (!player.isPlaying()){
+			if (!player.isPlaying()) {
 				player.play(currentPattern);
 			}
 		}
 	};
 	Runnable stop = new Runnable() {
 		public void run() {
-			if (player.isPlaying()){
+			if (player.isPlaying()) {
 				player.stop();
 			}
 		}
@@ -74,8 +76,8 @@ public class ScoringWindow extends JDialog {
 	Runnable newGenome = new Runnable() {
 
 		public void run() {
-			if (player != null){
-				if (player.isPlaying()){
+			if (player != null) {
+				if (player.isPlaying()) {
 					player.stop();
 				}
 			}
@@ -88,8 +90,8 @@ public class ScoringWindow extends JDialog {
 	Runnable newSong = new Runnable() {
 
 		public void run() {
-			if (player != null){
-				if (player.isPlaying()){
+			if (player != null) {
+				if (player.isPlaying()) {
 					player.stop();
 				}
 			}
@@ -99,19 +101,42 @@ public class ScoringWindow extends JDialog {
 	};
 	Runnable pause = new Runnable() {
 		public void run() {
-			if (player.isPlaying()){
+			if (player.isPlaying()) {
 				player.pause();
 			}
 		}
 	};
 	Runnable resume = new Runnable() {
 		public void run() {
-			if (player.isPaused()){
+			if (player.isPaused()) {
 				player.resume();
 			}
 		}
 	};
 
+	Runnable continuousMusic = new Runnable() {
+
+		public void run() {
+			int i = 1000;
+
+			currentGenome = new Genome();
+			currentPattern = generator.getSong(currentGenome);
+			player = new Player();
+			textField.setText(currentGenome.toString());
+
+			while (i > 0) {
+				if (!player.isPlaying()) {
+					player.play(currentPattern);
+					currentGenome = new Genome();
+					currentPattern = generator.getSong(currentGenome);
+					player = new Player();
+					textField.setText(currentGenome.toString());
+					--i;
+				}
+
+			}
+		}
+	};
 
 	private JTextField textField;
 
@@ -120,20 +145,21 @@ public class ScoringWindow extends JDialog {
 	 */
 	public ScoringWindow() {
 		try {
-		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-		        if ("Nimbus".equals(info.getName())) {
-		            UIManager.setLookAndFeel(info.getClassName());
-		            break;
-		        }
-		    }
-		} catch (Exception e) {
-		    // Nimbus is not available, use the default
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		}
+		catch (Exception e) {
+			// Nimbus is not available, use the default
 		}
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if (player != null){
-					if (player.isPlaying()){
+				if (player != null) {
+					if (player.isPlaying()) {
 						player.stop();
 					}
 				}
@@ -144,6 +170,7 @@ public class ScoringWindow extends JDialog {
 			public void focusLost(FocusEvent e) {
 				(new Thread(pause)).start();
 			}
+
 			@Override
 			public void focusGained(FocusEvent e) {
 				(new Thread(resume)).start();
@@ -212,7 +239,8 @@ public class ScoringWindow extends JDialog {
 					textField.setColumns(10);
 				}
 				{
-					JButton btnGenerateNewSong = new JButton("Generate new song");
+					JButton btnGenerateNewSong =
+							new JButton("Generate new song");
 					btnGenerateNewSong.addMouseListener(new MouseAdapter() {
 						@Override
 						public void mouseClicked(MouseEvent e) {
@@ -230,7 +258,9 @@ public class ScoringWindow extends JDialog {
 			}
 		}
 		generator = new MusicGen();
-		(new Thread(newGenome)).start();
+		// (new Thread(newGenome)).start();
+		(new Thread(continuousMusic)).start();
+
 	}
 
 }
