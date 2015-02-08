@@ -41,14 +41,6 @@ public class MusicGen {
 	 */
 	private float restChance = .142f;
 	/**
-	 * chance of a sharp or a flat
-	 */
-	private float sharpModChance = .473f;
-	/**
-	 * if a note is modified, the chance that modification is a sharp
-	 */
-	private float sharpChance = .372f;
-	/**
 	 * how much the octave leans towards the center when deciding shifts
 	 */
 	private float octaveShiftVariance = 0.605f;
@@ -150,7 +142,8 @@ public class MusicGen {
 				currentNote = 0;
 			}
 			else if (currentNote == 3) {
-				currentNote = 2;
+				currentNote = 2;// TODO replace with the musical key values not
+								// hard coded note values
 			}
 			else if (currentNote >= 6) {
 				currentNote = 5;
@@ -253,10 +246,10 @@ public class MusicGen {
 	 * @param measures how many measures to generate
 	 * @return the newly generated song
 	 */
-	private Pattern buildSong(int measures, int voice) {
+	private Pattern buildSong(int measures) {
 		String tmp = "";
 		Pattern song = new Pattern();
-		song.add(new Pattern("V0 I" + voice));
+		song.add(new Pattern("V0 I0"));// piano on voice 1
 		for (int i = 0; i < measures; ++i) {
 			tmp =
 					"V0 "
@@ -282,7 +275,7 @@ public class MusicGen {
 	 * @return the newly created song
 	 */
 	public Pattern getSong(Genome genome) {
-		int voice = genome.getGene(0).getValue();
+		int key = genome.getGene(0).getValue();// TODO change the key
 		int length = genome.getGene(1).getValue();
 		for (float f : durationValues.keySet()) {
 			if (durationValues.get(f) == length) {
@@ -331,7 +324,7 @@ public class MusicGen {
 			break;
 		}
 
-		Pattern p = buildSong(10, voice);
+		Pattern p = buildSong(10);
 		return p;
 	}
 }

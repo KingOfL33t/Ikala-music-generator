@@ -41,30 +41,16 @@ public class Gene {
 
 	}
 
+	//TODO new keys
 	/**
-	 * The different voices are:
+	 * Currently does nothing. This determines what key the song is in.
 	 *
 	 * <ol start="0">
-	 * <li>0 (PIANO or ACOUSTIC_GRAND)</li>
-	 * <li>9 (GLOCKENSPIEL)</li>
-	 * <li>16 (DRAWBAR_ORGAN)</li>
-	 * <li>34 (ELECTRIC_BASS_PICK)</li>
-	 * <li>38 (SYNTH_BASS_1)</li>
-	 * <li>40 (VIOLIN)</li>
-	 * <li>44 (TREMOLO_STRINGS)</li>
-	 * <li>47 (TIMPANI)</li>
-	 * <li>48 (STRING_ENSEMBLE_1)</li>
-	 * <li>74 (RECORDER)</li>
-	 * <li>81 (LEAD_SAWTOOTH or SAWTOOTH)</li>
-	 * <li>94 (PAD_HALO or HALO)</li>
-	 * <li>95 (PAD_SWEEP or SWEEP)</li>
-	 * <li>106 (SHAMISEN)</li>
-	 * <li>110 (FIDDLE)</li>
+	 * <li>0 C</li>
 	 * </ol>
 	 *
 	 */
-	public static final byte[] VAL_VOICES = {0, 9, 16, 34, 38, 40, 44, 47, 48,
-			74, 81, 94, 95, 106, 110};
+	public static final byte[] VAL_KEY = {0};
 	/**
 	 * Defines the normal length of a note. The note lengths are:
 	 *
@@ -100,12 +86,13 @@ public class Gene {
 	/**
 	 * An array of id's and their values. The IDs are:
 	 * <ol start="0">
-	 * <li>{@link #VAL_VOICES Voices}</li>
+	 * <li>{@link #VAL_KEY Key}</li>
 	 * <li>{@link #VAL_NOTE_LENGTH Note length}</li>
+	 * <li>{@link #VAL_BEAT_SPLIT Beat split chance}</li>
 	 * </ol>
 	 *
 	 */
-	public static final byte[][] VALUE_MAP = {VAL_VOICES, VAL_NOTE_LENGTH,
+	public static final byte[][] VALUE_MAP = {VAL_KEY, VAL_NOTE_LENGTH,
 			VAL_BEAT_SPLIT};
 
 	private byte currentValue = 0;
