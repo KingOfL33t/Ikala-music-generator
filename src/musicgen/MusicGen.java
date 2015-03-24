@@ -3,7 +3,7 @@ package musicgen;
 
 import java.util.HashMap;
 
-import org.jfugue.Pattern;
+import org.jfugue.pattern.Pattern;
 
 /**
  * Used to generate music.
@@ -27,8 +27,6 @@ public class MusicGen {
 
 	private final String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
 	private final String rest = "R";
-	private final String flat = "b";
-	private final String sharp = "#";
 	private final int minOctave = 0;
 	private final int maxOctave = 9;
 	private final String[] durations = {"w", "h", "q", "i", "s", "t"};
@@ -275,7 +273,6 @@ public class MusicGen {
 	 * @return the newly created song
 	 */
 	public Pattern getSong(Genome genome) {
-		int key = genome.getGene(0).getValue();// TODO change the key
 		int length = genome.getGene(1).getValue();
 		for (float f : durationValues.keySet()) {
 			if (durationValues.get(f) == length) {
