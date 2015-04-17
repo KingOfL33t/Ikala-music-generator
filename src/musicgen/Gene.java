@@ -1,4 +1,3 @@
-
 package musicgen;
 
 /**
@@ -8,7 +7,7 @@ package musicgen;
  * @author Ches Burks
  *
  */
-public class Gene {
+class Gene {
 
 	/**
 	 * Constructs a new Gene with the supplied ID. A random valid value is
@@ -18,7 +17,7 @@ public class Gene {
 	 * @see #Gene(byte, byte)
 	 */
 	public Gene(byte id) {
-		this(id, getRandomValidValue(id));
+		this(id, Gene.getRandomValidValue(id));
 	}
 
 	/**
@@ -28,11 +27,11 @@ public class Gene {
 	 * @param value the value of the gene
 	 */
 	public Gene(byte id, byte value) {
-		if (id >= VALUE_MAP.length - 1 || id < 0) {
+		if (id >= Gene.VALUE_MAP.length - 1 || id < 0) {
 			// TODO throw an error
 		}
-		this.id = id;
-		if (contains(id, value)) {
+		this.idValue = id;
+		if (this.contains(id, value)) {
 			this.currentValue = value;
 		}
 		else {
@@ -41,7 +40,7 @@ public class Gene {
 
 	}
 
-	//TODO new keys
+	// TODO new keys
 	/**
 	 * Currently does nothing. This determines what key the song is in.
 	 *
@@ -92,8 +91,8 @@ public class Gene {
 	 * </ol>
 	 *
 	 */
-	public static final byte[][] VALUE_MAP = {VAL_KEY, VAL_NOTE_LENGTH,
-			VAL_BEAT_SPLIT};
+	public static final byte[][] VALUE_MAP = {Gene.VAL_KEY,
+			Gene.VAL_NOTE_LENGTH, Gene.VAL_BEAT_SPLIT};
 
 	private byte currentValue = 0;
 	/**
@@ -101,10 +100,10 @@ public class Gene {
 	 *
 	 * @see #VALUE_MAP
 	 */
-	private byte id = 0;
+	private byte idValue = 0;
 
 	private boolean contains(byte id, byte value) {
-		byte[] bytes = VALUE_MAP[id];
+		byte[] bytes = Gene.VALUE_MAP[id];
 		for (int i = 0; i < bytes.length; ++i) {
 			if (bytes[i] == value) {
 				return true;
@@ -119,7 +118,7 @@ public class Gene {
 	 * @return the value of this gene
 	 */
 	public byte getValue() {
-		return currentValue;
+		return this.currentValue;
 	}
 
 	/**
@@ -129,7 +128,7 @@ public class Gene {
 	 * @see #VALUE_MAP the list of mappings
 	 */
 	public byte getID() {
-		return id;
+		return this.idValue;
 	}
 
 	/**
@@ -139,8 +138,8 @@ public class Gene {
 	 * @param val the new value to use
 	 */
 	public void setValue(byte val) {
-		if (contains(id, val)) {
-			currentValue = val;
+		if (this.contains(this.idValue, val)) {
+			this.currentValue = val;
 		}
 	}
 
@@ -149,7 +148,7 @@ public class Gene {
 	 */
 	public void mutate() {
 		// picks a random value from the array
-		currentValue = getRandomValidValue(id);
+		this.currentValue = Gene.getRandomValidValue(this.idValue);
 	}
 
 	/**
@@ -159,7 +158,7 @@ public class Gene {
 	 * @return values that gene can have
 	 */
 	public static byte[] getValidValues(int id) {
-		return VALUE_MAP[id];
+		return Gene.VALUE_MAP[id];
 	}
 
 	/**
@@ -170,7 +169,8 @@ public class Gene {
 	 * @return a random value that gene can have
 	 */
 	public static byte getRandomValidValue(int id) {
-		return VALUE_MAP[id][RNG.getIntBetween(0, VALUE_MAP[id].length - 1)];
+		return Gene.VALUE_MAP[id][RNG.getIntBetween(0,
+				Gene.VALUE_MAP[id].length - 1)];
 	}
 
 	/**

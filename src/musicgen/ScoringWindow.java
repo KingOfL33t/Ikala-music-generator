@@ -1,4 +1,3 @@
-
 package musicgen;
 
 import java.awt.BorderLayout;
@@ -14,6 +13,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.jfugue.pattern.Pattern;
@@ -26,7 +26,7 @@ import org.jfugue.player.Player;
  * @author Ches Burks
  *
  */
-public class ScoringWindow extends JDialog {
+class ScoringWindow extends JDialog {
 
 	/**
 	 *
@@ -42,13 +42,13 @@ public class ScoringWindow extends JDialog {
 
 	/**
 	 * Launch the application.
-	 * 
+	 *
 	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
 		try {
 			ScoringWindow dialog = new ScoringWindow();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		}
 		catch (Exception e) {
@@ -57,25 +57,33 @@ public class ScoringWindow extends JDialog {
 	}
 
 	Runnable play = new Runnable() {
+		@Override
 		public void run() {
-			player.play(currentPattern);
+			ScoringWindow.this.player.play(ScoringWindow.this.currentPattern);
 
 		}
 	};
 	Runnable newGenome = new Runnable() {
 
+		@Override
 		public void run() {
-			currentGenome = new Genome();
-			currentPattern = generator.getSong(currentGenome);
-			player = new Player();
-			textField.setText(currentGenome.toString());
+			ScoringWindow.this.currentGenome = new Genome();
+			ScoringWindow.this.currentPattern =
+					ScoringWindow.this.generator
+							.getSong(ScoringWindow.this.currentGenome);
+			ScoringWindow.this.player = new Player();
+			ScoringWindow.this.textField
+					.setText(ScoringWindow.this.currentGenome.toString());
 		}
 	};
 	Runnable newSong = new Runnable() {
 
+		@Override
 		public void run() {
-			currentPattern = generator.getSong(currentGenome);
-			player = new Player();
+			ScoringWindow.this.currentPattern =
+					ScoringWindow.this.generator
+							.getSong(ScoringWindow.this.currentGenome);
+			ScoringWindow.this.player = new Player();
 		}
 
 	};
@@ -97,19 +105,19 @@ public class ScoringWindow extends JDialog {
 		catch (Exception e) {
 			// Nimbus is not available, use the default
 		}
-		addWindowListener(new WindowAdapter() {
+		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
-		setTitle("Scoring");
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 0));
+		this.setTitle("Scoring");
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setBounds(100, 100, 450, 300);
+		this.getContentPane().setLayout(new BorderLayout());
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.getContentPane().add(this.contentPanel, BorderLayout.CENTER);
+		this.contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			JSlider slider = new JSlider();
 			slider.setValue(3);
@@ -120,7 +128,7 @@ public class ScoringWindow extends JDialog {
 			slider.setMajorTickSpacing(1);
 			slider.setMinimum(1);
 			slider.setMaximum(5);
-			contentPanel.add(slider, BorderLayout.SOUTH);
+			this.contentPanel.add(slider, BorderLayout.SOUTH);
 		}
 		{
 			JButton btnSubmit = new JButton("Submit");
@@ -130,38 +138,38 @@ public class ScoringWindow extends JDialog {
 
 				}
 			});
-			contentPanel.add(btnSubmit, BorderLayout.EAST);
+			this.contentPanel.add(btnSubmit, BorderLayout.EAST);
 		}
 		{
 			JButton btnNew = new JButton("New Genome");
 			btnNew.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					(new Thread(newGenome)).start();
+					(new Thread(ScoringWindow.this.newGenome)).start();
 				}
 			});
-			contentPanel.add(btnNew, BorderLayout.WEST);
+			this.contentPanel.add(btnNew, BorderLayout.WEST);
 		}
 		{
 			JPanel panel = new JPanel();
-			contentPanel.add(panel, BorderLayout.CENTER);
+			this.contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(new BorderLayout(0, 0));
 			{
 				JButton button = new JButton("Play");
 				button.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						(new Thread(play)).start();
+						(new Thread(ScoringWindow.this.play)).start();
 					}
 				});
 				panel.add(button, BorderLayout.EAST);
 			}
 			{
 				{
-					textField = new JTextField();
-					textField.setEditable(false);
-					panel.add(textField, BorderLayout.CENTER);
-					textField.setColumns(10);
+					this.textField = new JTextField();
+					this.textField.setEditable(false);
+					panel.add(this.textField, BorderLayout.CENTER);
+					this.textField.setColumns(10);
 				}
 				{
 					JButton btnGenerateNewSong =
@@ -169,15 +177,15 @@ public class ScoringWindow extends JDialog {
 					btnGenerateNewSong.addMouseListener(new MouseAdapter() {
 						@Override
 						public void mouseClicked(MouseEvent e) {
-							(new Thread(newSong)).start();
+							(new Thread(ScoringWindow.this.newSong)).start();
 						}
 					});
 					panel.add(btnGenerateNewSong, BorderLayout.NORTH);
 				}
 			}
 		}
-		generator = new MusicGen();
-		(new Thread(newGenome)).start();
+		this.generator = new MusicGen();
+		(new Thread(this.newGenome)).start();
 
 	}
 

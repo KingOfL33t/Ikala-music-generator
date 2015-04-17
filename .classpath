@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="thirdParty/jfugue-5.0.1.jar" sourcepath="thirdParty/jfugue-5.0.1-src.zip">
+	<classpathentry exported="true" kind="lib" path="thirdParty/jfugue-5.0.1.jar" sourcepath="thirdParty/jfugue-5.0.1-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/musicgen/thirdParty/jfugue-5.0.1-doc.zip!/"/>
 		</attributes>

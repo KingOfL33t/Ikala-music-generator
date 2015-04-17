@@ -1,4 +1,3 @@
-
 package markov;
 
 import java.io.BufferedReader;
@@ -10,7 +9,7 @@ import java.io.PrintWriter;
 
 /**
  * Handles saving chain data to and loading chain data from file.
- * 
+ *
  * @author Ches Burks
  *
  */
@@ -18,7 +17,7 @@ public class SaveHandler {
 
 	/**
 	 * Reads the stored input from file
-	 * 
+	 *
 	 * @param toLoad the chain to load to
 	 * @param location the file to load from
 	 * @throws Exception if the file is not valid
@@ -62,7 +61,9 @@ public class SaveHandler {
 					}
 					Child newChild = new Child(parts[1]);
 					newChild.setOccuranceCount(Integer.parseInt(parts[2]));
-					newLink.add(newChild);
+					if (newLink != null) {
+						newLink.add(newChild);
+					}
 				}
 				if (added == 0) {
 					toLoad.add(newLink);
@@ -89,7 +90,7 @@ public class SaveHandler {
 
 	/**
 	 * Stores the chain in a file.
-	 * 
+	 *
 	 * @param toSave the chain to save
 	 * @param location the file to store the data in
 	 */

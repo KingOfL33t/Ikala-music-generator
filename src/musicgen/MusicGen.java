@@ -1,9 +1,9 @@
-
 package musicgen;
 
 import java.util.HashMap;
 
 import org.jfugue.pattern.Pattern;
+import org.jfugue.player.Player;
 
 /**
  * Used to generate music.
@@ -13,16 +13,19 @@ import org.jfugue.pattern.Pattern;
  */
 public class MusicGen {
 
+	private Player player;
+
 	/**
 	 * Constructs a new music generator and initializes some variables.
 	 */
 	public MusicGen() {
-		durationValues.put(1.0f, 0);
-		durationValues.put(1.0f / 2, 1);
-		durationValues.put(1.0f / 4, 2);
-		durationValues.put(1.0f / 8, 3);
-		durationValues.put(1.0f / 16, 4);
-		durationValues.put(1.0f / 32, 5);
+		this.durationValues.put(1.0f, 0);
+		this.durationValues.put(1.0f / 2, 1);
+		this.durationValues.put(1.0f / 4, 2);
+		this.durationValues.put(1.0f / 8, 3);
+		this.durationValues.put(1.0f / 16, 4);
+		this.durationValues.put(1.0f / 32, 5);
+		player = new Player();
 	}
 
 	private final String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
@@ -30,8 +33,7 @@ public class MusicGen {
 	private final int minOctave = 0;
 	private final int maxOctave = 9;
 	private final String[] durations = {"w", "h", "q", "i", "s", "t"};
-	private final HashMap<Float, Integer> durationValues =
-			new HashMap<Float, Integer>();
+	private final HashMap<Float, Integer> durationValues = new HashMap<>();
 
 	// settings
 	/**
@@ -74,11 +76,11 @@ public class MusicGen {
 	 */
 	private void increaseNote() {
 		int delta = RNG.getIntBetween(1, 3);
-		if (currentNote + delta < notes.length - 1) {
-			currentNote += delta;
+		if (this.currentNote + delta < this.notes.length - 1) {
+			this.currentNote += delta;
 		}
-		else if (currentNote < notes.length - 1) {
-			currentNote += 1;
+		else if (this.currentNote < this.notes.length - 1) {
+			this.currentNote += 1;
 		}
 
 	}
@@ -89,11 +91,11 @@ public class MusicGen {
 	 */
 	private void decreaseNote() {
 		int delta = RNG.getIntBetween(1, 3);
-		if (currentNote - delta > 0) {
-			currentNote -= delta;
+		if (this.currentNote - delta > 0) {
+			this.currentNote -= delta;
 		}
-		else if (currentNote > 0) {
-			currentNote -= 1;
+		else if (this.currentNote > 0) {
+			this.currentNote -= 1;
 		}
 
 	}
@@ -111,42 +113,43 @@ public class MusicGen {
 			if (duration / 2 >= 1.0f / 32) {
 				String toReturn = "";
 				toReturn +=
-						getBeat(duration / 2, splitChance
-								/ smallBeatReductionFactor);
+						this.getBeat(duration / 2, splitChance
+								/ this.smallBeatReductionFactor);
 				toReturn += " ";
 				toReturn +=
-						getBeat(duration / 2, splitChance
-								/ smallBeatReductionFactor);
+						this.getBeat(duration / 2, splitChance
+								/ this.smallBeatReductionFactor);
 				return toReturn;
 			}
 		}
 		String note = "";
-		if (RNG.getBoolean(restChance)) {
+		if (RNG.getBoolean(this.restChance)) {
 			// Rest
-			note += rest;
+			note += this.rest;
 		}
 		else {
 			// Note
-			if (!RNG.getBoolean(noteChangeChanceSame)) {
+			if (!RNG.getBoolean(this.noteChangeChanceSame)) {
 				if (RNG.getBoolean()) {
-					increaseNote();
+					this.increaseNote();
 				}
 				else {
-					decreaseNote();
+					this.decreaseNote();
 				}
 			}// TODO clean up the note generation code
 				// TODO perhaps add different keys
-			if (currentNote == 1) {
-				currentNote = 0;
+			if (this.currentNote == 1) {
+				this.currentNote = 0;
 			}
-			else if (currentNote == 3) {
-				currentNote = 2;// TODO replace with the musical key values not
-								// hard coded note values
+			else if (this.currentNote == 3) {
+				this.currentNote = 2;// TODO replace with the musical key values
+										// not
+				// hard coded note values
 			}
-			else if (currentNote >= 6) {
-				currentNote = 5;
+			else if (this.currentNote >= 6) {
+				this.currentNote = 5;
 			}
-			note += notes[currentNote];
+			note += this.notes[this.currentNote];
 			// make it sharp or flat
 			/*
 			 * if (RNG.getBoolean(sharpModChance)) { if
@@ -154,10 +157,10 @@ public class MusicGen {
 			 * flat; } }
 			 */
 			// add the octive number
-			note += currentOctave;
+			note += this.currentOctave;
 		}
 		// Length
-		note += durations[durationValues.get(duration)];
+		note += this.durations[this.durationValues.get(duration)];
 		return note;
 	}
 
@@ -167,32 +170,32 @@ public class MusicGen {
 	 * strongly it is pulled to the middle.
 	 */
 	private void shiftOctave() {
-		int halfWayOctive = (minOctave + maxOctave) / 2;
-		if (currentOctave < halfWayOctive) {
+		int halfWayOctive = (this.minOctave + this.maxOctave) / 2;
+		if (this.currentOctave < halfWayOctive) {
 			// want to shift up more
-			if (RNG.getBoolean(0.5f + octaveShiftVariance)) {
-				++currentOctave;
+			if (RNG.getBoolean(0.5f + this.octaveShiftVariance)) {
+				++this.currentOctave;
 			}
 			else {
-				--currentOctave;
+				--this.currentOctave;
 			}
 		}
 		else {
 			// want to shift down more
-			if (RNG.getBoolean(0.5f + octaveShiftVariance)) {
-				--currentOctave;
+			if (RNG.getBoolean(0.5f + this.octaveShiftVariance)) {
+				--this.currentOctave;
 			}
 			else {
-				++currentOctave;
+				++this.currentOctave;
 			}
 		}
 
 		// bounds check
-		if (currentOctave < minOctave) {
-			currentOctave = minOctave;
+		if (this.currentOctave < this.minOctave) {
+			this.currentOctave = this.minOctave;
 		}
-		if (currentOctave > maxOctave) {
-			currentOctave = maxOctave;
+		if (this.currentOctave > this.maxOctave) {
+			this.currentOctave = this.maxOctave;
 		}
 	}
 
@@ -207,32 +210,35 @@ public class MusicGen {
 		int i;
 
 		float baseValue = 1.0f;
-		if (timeTop < baseValue) {
-			baseValue = timeTop;
+		if (this.timeTop < baseValue) {
+			baseValue = this.timeTop;
 		}
 		// invalid value
 		int numElements = -1;
 
 		while ((numElements & (numElements - 1)) != 0
-				|| !durationValues.containsKey(timeBottom / numElements)) {
+				|| !this.durationValues.containsKey(this.timeBottom
+						/ numElements)) {
 			// not a power of 2
 			numElements =
 					RNG.getWeightedIntBetween(1,
 							(int) (baseValue / (1.0f / 32)), 1);
 		}
 		for (i = 0; i < numElements; ++i) {
-			if (timeTop / numElements > 1) {
-				measure += getBeat(1.0f, smallerBeatChance);
+			if (this.timeTop / numElements > 1) {
+				measure += this.getBeat(1.0f, this.smallerBeatChance);
 			}
 			else {
-				measure += getBeat(timeTop / numElements, smallerBeatChance);
+				measure +=
+						this.getBeat(this.timeTop / numElements,
+								this.smallerBeatChance);
 			}
 
 			measure += " ";
 		}
 
 		if (RNG.getBoolean(0.4f)) {
-			shiftOctave();
+			this.shiftOctave();
 		}
 		return measure;
 	}
@@ -249,19 +255,34 @@ public class MusicGen {
 		Pattern song = new Pattern();
 		song.add(new Pattern("V0 I0"));// piano on voice 1
 		for (int i = 0; i < measures; ++i) {
-			tmp =
-					"V0 "
-							+ buildPianoMeasure()
-							+ "V9 L0 [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]s [TAMBOURINE]s [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i ";
-			tmp +=
-					"V9 L1 [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i ";
-			tmp += "V9 L2 Rq Rq [ELECTRIC_SNARE]q Rq ";
-			tmp += "V9 L3 [BASS_DRUM]q Ri [BASS_DRUM]i Rq [BASS_DRUM]q ";
-			System.out.print(tmp);
+			/*
+			 * tmp = "V0 " + this.buildPianoMeasure() +
+			 * "V9 L0 [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]s [TAMBOURINE]s [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i [TAMBOURINE]i "
+			 * ; tmp +=
+			 * "V9 L1 [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i [OPEN_HI_HAT]i "
+			 * ; tmp += "V9 L2 Rq Rq [ELECTRIC_SNARE]q Rq "; tmp +=
+			 * "V9 L3 [BASS_DRUM]q Ri [BASS_DRUM]i Rq [BASS_DRUM]q ";
+			 * System.out.print(tmp);
+			 */
+			tmp = "V0 " + this.buildPianoMeasure();
 			song.add(new Pattern(tmp));
 		}
-		System.out.println();
+		// System.out.println();
 		return song;
+	}
+
+	/**
+	 * Creates and plays a new song, if it is not already playing one.
+	 */
+	public void play() {
+		if (player.getManagedPlayer().isPlaying()) {
+			return;
+		}
+		Genome ggnome = new Genome();
+		ggnome.setGene(1, new Gene((byte) 1, Gene.VAL_NOTE_LENGTH[3]));
+		ggnome.setGene(2, new Gene((byte) 2, Gene.VAL_BEAT_SPLIT[4]));
+		Pattern p = getSong(ggnome);
+		player.play(p);
 	}
 
 	// play notes 1 3 5 6 of a major scale
@@ -272,56 +293,56 @@ public class MusicGen {
 	 * @param genome the genes to use in generation of the song
 	 * @return the newly created song
 	 */
-	public Pattern getSong(Genome genome) {
+	Pattern getSong(Genome genome) {
 		int length = genome.getGene(1).getValue();
-		for (float f : durationValues.keySet()) {
-			if (durationValues.get(f) == length) {
-				timeBottom = f;
-				timeTop = timeBottom * 4;
+		for (float f : this.durationValues.keySet()) {
+			if (this.durationValues.get(f) == length) {
+				this.timeBottom = f;
+				this.timeTop = this.timeBottom * 4;
 			}
 		}
 		int split = genome.getGene(2).getValue();
 		switch (split) {
 		case 0:
-			smallerBeatChance = 0.0f;
-			smallBeatReductionFactor = 999999;
+			this.smallerBeatChance = 0.0f;
+			this.smallBeatReductionFactor = 999999;
 			break;
 		case 1:
-			smallerBeatChance = 0.05f;
-			smallBeatReductionFactor = 6;
+			this.smallerBeatChance = 0.05f;
+			this.smallBeatReductionFactor = 6;
 			break;
 		case 2:
-			smallerBeatChance = 0.25f;
-			smallBeatReductionFactor = 64;
+			this.smallerBeatChance = 0.25f;
+			this.smallBeatReductionFactor = 64;
 			break;
 		case 3:
-			smallerBeatChance = 0.25f;
-			smallBeatReductionFactor = 64;
+			this.smallerBeatChance = 0.25f;
+			this.smallBeatReductionFactor = 64;
 			break;
 		case 4:
-			smallerBeatChance = 0.5f;
-			smallBeatReductionFactor = 2;
+			this.smallerBeatChance = 0.5f;
+			this.smallBeatReductionFactor = 2;
 			break;
 		case 5:
-			smallerBeatChance = 0.75f;
-			smallBeatReductionFactor = 64;
+			this.smallerBeatChance = 0.75f;
+			this.smallBeatReductionFactor = 64;
 			break;
 
 		case 6:
-			smallerBeatChance = 0.75f;
-			smallBeatReductionFactor = 64;
+			this.smallerBeatChance = 0.75f;
+			this.smallBeatReductionFactor = 64;
 			break;
 		case 7:
-			smallerBeatChance = 0.9f;
-			smallBeatReductionFactor = 6;
+			this.smallerBeatChance = 0.9f;
+			this.smallBeatReductionFactor = 6;
 			break;
 		case 8:
-			smallerBeatChance = 1.0f;
-			smallBeatReductionFactor = 1;
+			this.smallerBeatChance = 1.0f;
+			this.smallBeatReductionFactor = 1;
 			break;
 		}
 
-		Pattern p = buildSong(10);
+		Pattern p = this.buildSong(10);
 		return p;
 	}
 }
