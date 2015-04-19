@@ -3,7 +3,7 @@ package musicgen;
 /**
  * Contains a list of genes which can mutate or cross with others to create new
  * genomes. A genome cannot have more than 128 genes.
- * 
+ *
  * @author Ches Burks
  *
  */
@@ -43,7 +43,7 @@ class Genome {
 	 * Sets the gene at the given position, assuming it is a valid position.
 	 * Warning! Currently does not check for gene valdidity, only index
 	 * validity.
-	 * 
+	 *
 	 * @param id the position of the gene
 	 * @param gene the gene to set
 	 */

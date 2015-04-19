@@ -21,6 +21,8 @@ import javax.swing.JTextPane;
 import markov.Chain;
 import markov.Child;
 import markov.Link;
+import markov.SaveHandler;
+import midi.Song;
 
 import org.jfugue.midi.MidiFileManager;
 import org.jfugue.pattern.Pattern;
@@ -35,14 +37,14 @@ import org.jfugue.player.Player;
 class MidiInterface {
 
 	JFrame MainFrame;
-	private Chain logicChain = new markov.Chain();
+	Chain logicChain = new markov.Chain();
 	private int threads = 0;
 	private int posts = 0;
 	private int page = 0;
 
 	private JLabel lblNumPosts;
 	private JLabel lblNumThreads;
-	private JLabel lblNumChains;
+	JLabel lblNumChains;
 	JLabel lblStatus;
 	private JLabel lblPage;
 
@@ -55,6 +57,7 @@ class MidiInterface {
 
 	Player player = new Player();
 	Pattern pat;
+	private JButton btnLoadMidi;
 
 	private class LoadThread extends Thread {
 		@Override
@@ -77,12 +80,6 @@ class MidiInterface {
 						.setText("Do not have permission to read.");
 				return;
 			}
-			/*
-			 * try { SaveHandler.loadToChain(logicChain,
-			 * filepicker.getSelectedFile()); } catch (Exception e) {
-			 * postField.setText("Invalid file"); logicChain.clear();
-			 * updateChains(); }
-			 */
 
 			try {
 				MidiInterface.this.pat =
@@ -101,8 +98,46 @@ class MidiInterface {
 			}
 
 			MidiInterface.this.lblStatus.setText("Status: idle");
-			// lblNumChains.setText("# Chains: "
-			// + logicChain.getKnownWords().size());
+			MidiInterface.this.lblNumChains.setText("# Chains: "
+					+ MidiInterface.this.logicChain.getKnownWords().size());
+		}
+	}
+
+	private class LoadMidiThread extends Thread {
+		@Override
+		public void run() {
+			MidiInterface.this.lblStatus.setText("Status: loading...");
+			JFileChooser filepicker = new JFileChooser();
+			filepicker.showSaveDialog(new JDialog());
+			if (filepicker.getSelectedFile() == null) {
+				MidiInterface.this.postField
+						.setText("You did not pick a file.");
+				return;
+			}
+			if (!filepicker.getSelectedFile().exists()) {
+				MidiInterface.this.postField
+						.setText("That file does not exist.");
+				return;
+			}
+			if (!filepicker.getSelectedFile().canRead()) {
+				MidiInterface.this.postField
+						.setText("Do not have permission to read.");
+				return;
+			}
+
+			try {
+				Song song = SaveHandler.loadSong(filepicker.getSelectedFile());
+
+			}
+			catch (Exception e) {
+				MidiInterface.this.postField.setText("Invalid file");
+				MidiInterface.this.logicChain.clear();
+				MidiInterface.this.updateChains();
+			}
+
+			MidiInterface.this.lblStatus.setText("Status: idle");
+			MidiInterface.this.lblNumChains.setText("# Chains: "
+					+ MidiInterface.this.logicChain.getKnownWords().size());
 		}
 	}
 
@@ -286,6 +321,15 @@ class MidiInterface {
 				(new SaveThread()).start();
 			}
 		});
+
+		this.btnLoadMidi = new JButton("Load from MIDI ASCII");
+		this.btnLoadMidi.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				(new LoadMidiThread()).start();
+			}
+		});
+		panel_1.add(this.btnLoadMidi);
 		panel_1.add(btnSaveData);
 
 		this.panel_3 = new JPanel();
@@ -335,7 +379,7 @@ class MidiInterface {
 	/**
 	 * Returns a weighted random string in the list. A child with higher
 	 * occurrences return more often. This is not efficient.
-	 * 
+	 *
 	 * @param link the link to return children for
 	 *
 	 * @return a random child

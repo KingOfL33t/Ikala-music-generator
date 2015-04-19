@@ -7,6 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import midi.AsciiParser;
+import midi.Song;
+
 /**
  * Handles saving chain data to and loading chain data from file.
  *
@@ -22,7 +25,7 @@ public class SaveHandler {
 	 * @param location the file to load from
 	 * @throws Exception if the file is not valid
 	 */
-	public static void loadToChain(Chain toLoad, File location)
+	public static void loadChainStorageToChain(Chain toLoad, File location)
 			throws Exception {
 		BufferedReader in;
 		try {
@@ -86,6 +89,19 @@ public class SaveHandler {
 			toLoad.clear();
 			throw new Exception("Invalid input");
 		}
+	}
+
+	/**
+	 * Reads a MIDI file, parses it, and creates markov chain data from it. Adds
+	 * the data to the chain.
+	 *
+	 * @param location the file to load from
+	 * @return the song that was loaded from the midi text file
+	 */
+	public static Song loadSong(File location) {
+		Song song;
+		song = AsciiParser.parse(location);
+		return song;
 	}
 
 	/**

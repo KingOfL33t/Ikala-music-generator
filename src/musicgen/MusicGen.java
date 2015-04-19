@@ -25,7 +25,7 @@ public class MusicGen {
 		this.durationValues.put(1.0f / 8, 3);
 		this.durationValues.put(1.0f / 16, 4);
 		this.durationValues.put(1.0f / 32, 5);
-		player = new Player();
+		this.player = new Player();
 	}
 
 	private final String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
@@ -275,14 +275,14 @@ public class MusicGen {
 	 * Creates and plays a new song, if it is not already playing one.
 	 */
 	public void play() {
-		if (player.getManagedPlayer().isPlaying()) {
+		if (this.player.getManagedPlayer().isPlaying()) {
 			return;
 		}
 		Genome ggnome = new Genome();
-		ggnome.setGene(1, new Gene((byte) 1, Gene.VAL_NOTE_LENGTH[3]));
-		ggnome.setGene(2, new Gene((byte) 2, Gene.VAL_BEAT_SPLIT[4]));
-		Pattern p = getSong(ggnome);
-		player.play(p);
+		ggnome.setGene(1, new Gene((byte) 1, Gene.VAL_NOTE_LENGTH[4]));
+		ggnome.setGene(2, new Gene((byte) 2, Gene.VAL_BEAT_SPLIT[3]));
+		Pattern p = this.getSong(ggnome);
+		this.player.play(p);
 	}
 
 	// play notes 1 3 5 6 of a major scale

@@ -1,0 +1,32 @@
+format:
+NOTE:  "crotchet" (UK English) = "quarter note" (US English). And "bar" = "measure". 
+
+
+//first line
+format=# tracks=# division=# //the format, number of tracks (note this), and number of divisions per bar
+
+BA # //the bar number
+CR  #(+#/#)// crotchet number, adds up to the total crotchet number per bar set at top of file
+TR # CH # // track number, and channel (between 1 and 16) number, 
+          //decimal when preceded by '&' or hex when by '0x'
+NT //means play a note
+von=#//velocity
+
+
+
+
+//text type info:
+//The "text type" of the message, an integer 1-7 corresponding to one of the following conditions: 
+//(1) text, (2) copyright notice, (3) sequence or track name, (4) instrument name, (5) lyric, (6) marker, (7) cue point. 
+
+ST &A0 &3C &64 // generic midi event
+Meta Event   type &7F   0 0 119 14 0 //generic meta event (don't put in length, asc2mid counts the data bytes.)
+Sysex Event   &F7   0 1 2 3 //generic sysex event (don't put in length, asc2mid counts the data bytes.)
+
+//an event which has been given a name. Most common events have a name: NT (play a note), Time signature, Channel volume, Instrument, End of track, Tempo, Key, Text. 
+Channel volume 100
+Time signature 4/4, clocks/mtick 96, crotchets/32ndnote 8
+NT  C''          3+1/2 von=80 //Turn on C two octaves above middle C, lasting 3+1/2 crotchets, with velocity 80
+NT  Bb--         on //Turn on Bb one-and-a-bit octaves below middle C with velocity given by most recent von on same track.
+
+//so - drops an octave for a note, ' raises an octave for a note

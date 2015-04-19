@@ -119,29 +119,30 @@ class RNG {
 		}
 		int deviance = 0;
 		int result = 0;
+		int theCenter = center;
 		if (max < min) {
 			return min;
 		}
-		if (center < min) {
-			center = min;
+		if (theCenter < min) {
+			theCenter = min;
 		}
-		if (center > max) {
-			center = max;
+		if (theCenter > max) {
+			theCenter = max;
 		}
 
-		if (Math.abs(center - min) > Math.abs(max - center)) {
-			deviance = center - min;// the larger length
+		if (Math.abs(theCenter - min) > Math.abs(max - theCenter)) {
+			deviance = theCenter - min;// the larger length
 		}
 		else {
-			deviance = max - center;
+			deviance = max - theCenter;
 		}
 
-		result = (int) (center + deviance * RNG.r.nextGaussian() / 3);
+		result = (int) (theCenter + deviance * RNG.r.nextGaussian() / 3);
 		if (result < min) {
-			return RNG.getWeightedIntBetween(min, max, center);
+			return RNG.getWeightedIntBetween(min, max, theCenter);
 		}
 		if (result > max) {
-			return RNG.getWeightedIntBetween(min, max, center);
+			return RNG.getWeightedIntBetween(min, max, theCenter);
 		}
 		return result;
 	}
@@ -185,7 +186,7 @@ class RNG {
 
 	/**
 	 * Generates a long seed using SecureRandom
-	 * 
+	 *
 	 * @return a random generated long
 	 */
 	private static long getLongSeed() {
